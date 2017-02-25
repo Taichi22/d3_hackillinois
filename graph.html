@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script type="text/javascript" src="d3/d3.v3.js"></script>
+        <style type = "text/css">
+          .axis path, .axis line{fill: none; stroke: black; shape-rendering: cripsEdges} .axis text{font-family: sans-serif; font-size: 11px;}
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+        //Generate RandomDateArray
+        function randomDateArray(start, end, iter){
+          var dateset = [];
+          for( i = 0; i < iter; i++){
+            var randDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            dateset.push(randDate);
+          }
+          return dateset;
+        }
+        //Create dateset
+        var dateset = randomDateArray(new Date(2017, 0, 1), new Date(), 7);
+        //Text test
+        dateset.push(new Date);
+        var labelset = [];
+        for(i = 0; i < dateset.length; i++){
+          labelset.push(dateset[i]);
+        }
+        for(i = 0; i < dateset.length; i++){
+          dateset[i] = Number(dateset[i]);
+          dateset[i] = dateset[i]-1482192000000
+        }
+
+        d3.select("body").selectAll("p")
+          .data(dateset)
+          .enter()
+          .append("p")
+          .text(function(d){
+            return d;
+          });
+
+        var xScale = d3.scale.linear()
+					.domain([d3.min(dateset, function(d){return d}), d3.max(dateset, function(d) { return Number(d); })])
+					.range([30, 1000 - 30 * 2]);
+        var xAxis = d3.svg.axis()
+          .scale(xScale)
+          .orient("bottom")
+          .ticks(dateset.length);
+        var svg = d3.select("body")
+          .append("svg")
+          .attr("width", 1000)
+          .attr("height", 500);
+        svg.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(0," + (300 ) + ")")
+          .call(xAxis);
+        svg.selectAll("rect")
+           .data(dateset)
+           .enter()
+           .append("rect")
+           .attr("x", function(d) {
+             var t = Number(d);
+             return (xScale(t));
+           })
+           .attr("y", function(d) {
+              return 30})
+           .attr("width", 30)
+           .attr("height", 50);
+
+        </script>
+    </body>
+</html>
